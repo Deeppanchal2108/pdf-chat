@@ -1,0 +1,38 @@
+
+fastapi[standard]
+fastapi             
+uvicorn
+
+pydantic            
+python-dotenv       
+
+# Rate limiting & CORS
+slowapi             # Slim rate-limiting middleware for FastAPI
+
+# Async data stores & HTTP
+aioredis            # Redis client for session/history store
+httpx               # Async HTTP requests (e.g. calling Gemini via REST)
+
+# File uploads
+python-multipart    # support multipart/form-data in FastAPI
+
+# LLM orchestration & agents
+langchain           # chains, agents, vector-DB wrappers
+langgraph           # visualization/tracing for LangChain flows
+
+# Embedding & vector stores
+pinecone-client     # Pinecone managed vector DB
+chromadb            # Chroma local/cloud vector store
+
+# Google Generative AI (Gemini)
+google-generativeai # official Python client for Gemini models
+
+
+langchain-huggingface
+transformers
+huggingface-hub
+
+
+langchain-google-genai
+google-generativeai
+langchain-core
