@@ -1,6 +1,6 @@
 from fastapi import FastAPI,Request
-# from routes.chat import router as router_chat 
-# from routes.upload import router as router_upload
+from routes.chat import router as router_chat 
+from routes.upload import router as router_upload
 
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -11,8 +11,8 @@ app = FastAPI()
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# app.include_router(router_chat,"/chat")
-# app.include_router(router_upload,"/upload")
+app.include_router(router_chat , prefix="/chat")
+app.include_router(router_upload,prefix="/upload")
 
 
 @app.get('/health')

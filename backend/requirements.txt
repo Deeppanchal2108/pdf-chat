@@ -36,3 +36,9 @@ huggingface-hub
 langchain-google-genai
 google-generativeai
 langchain-core
+
+langchain_text_splitters
+langchain_community
+sqlalchemy
+psycopg2-binary
+pgvector
