@@ -42,3 +42,6 @@ langchain_community
 sqlalchemy
 psycopg2-binary
 pgvector
+
+pymupdf
+langchain_cohere 
