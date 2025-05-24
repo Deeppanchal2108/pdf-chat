@@ -9,6 +9,7 @@ import fitz  # PyMuPDF
 embedding_model = CohereEmbeddings(model="embed-english-v3.0")
 
 async def store_data(db: Session, user_id: UUID, file_id: UUID, file: UploadFile):
+    """ Function to store data in the database """
     try:
         content = await file.read()
         pdf = fitz.open(stream=content, filetype="pdf")  
