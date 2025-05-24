@@ -31,9 +31,9 @@ async def store_data(db: Session, user_id: UUID, file_id: UUID, file: UploadFile
                 )
                 db.add(embedding_obj)
 
-        db.commit()
+        await db.commit()
         print("Data stored successfully.")
     
     except Exception as e:
-        db.rollback()
+        await db.rollback()
         print(f"Error occurred: {e}")

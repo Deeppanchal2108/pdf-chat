@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 load_dotenv()
 
 
-def store_meta( db:Session ,user_id : UUID, file_name:str ,  content_type :str, file_size:float ):
+async def store_meta( db:Session ,user_id : UUID, file_name:str ,  content_type :str, file_size:float ):
     try:
         file = File(
         user_id=user_id,
@@ -14,11 +14,11 @@ def store_meta( db:Session ,user_id : UUID, file_name:str ,  content_type :str, 
         file_size=file_size
         )
         db.add(file)
-        db.commit()
-        db.refresh(file)
+        await db.commit()
+        await db.refresh(file)
         return {"success":True, "file":file}
     except Exception as e : 
-        db.rollback()
+        await db.rollback()
         return {"success":False, "error":"Something went wrong while storing the meta data"}
 
 

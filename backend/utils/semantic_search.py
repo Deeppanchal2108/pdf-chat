@@ -24,7 +24,7 @@ async def semantic_search(db :Session,query: str , user_id: UUID, session_id: UU
                         ORDER BY embedding <-> :embedding
                         LIMIT :top_k
                          """)
-        result =db.execute(
+        result =await db.execute(
             sql_query,
             {
                 "user_id": user_id,
