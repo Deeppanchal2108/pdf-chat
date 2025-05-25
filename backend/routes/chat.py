@@ -1,7 +1,6 @@
 from fastapi import FastAPI,Request,APIRouter ,HTTPException
-from uuid import UUID
 from langchain.prompts.chat import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import SystemMessage, HumanMessage, AIMessage 
+from langchain_core.messages import  HumanMessage, AIMessage 
 from utils.semantic_search import semantic_search
 from utils.load_history import load_history
 from utils.save_messages import save_message
@@ -9,6 +8,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from utils.db import get_db
+from utils.summarize_method import summarize_method
 from langchain_cohere import ChatCohere
 chat = ChatCohere()
 
@@ -28,7 +28,7 @@ will use some tools for agents
 
 """
 
-template= ChatPromptTemplate.from_messages([
+chat_template = ChatPromptTemplate.from_messages([
     ("system", "You are a helpful assistant who answers based only on the provided PDF chunks."),
     ("system", "PDF Content:\n{context}"),
     MessagesPlaceholder(variable_name="chat_history"),
@@ -37,10 +37,12 @@ template= ChatPromptTemplate.from_messages([
 
 @router.post("/")
 @limiter.limit("20/minute")
-async def chat(user_id: UUID, session_id: UUID, request: Request):
+async def chat( request: Request):
     try:
         data = await request.json()
         query = data.get("query")
+        user_id = data.get("user_id")
+        session_id = data.get("session_id")
         if not query:
             raise HTTPException(status_code=400, detail="Query is required")
         
@@ -68,7 +70,7 @@ async def chat(user_id: UUID, session_id: UUID, request: Request):
         context_messages = context["messages"]
 
         model = ChatCohere(temperature=0.1)
-        chain = template | model
+        chain = chat_template | model
         response = chain.invoke({"chat_history": context_messages, "query": query, "context": chunks})
 
         if not response["success"]:
@@ -96,8 +98,25 @@ async def chat(user_id: UUID, session_id: UUID, request: Request):
             "message": "Something went wrong",
             "error": str(e)
         }
-    
-    
+  
 
 
-    
+@router.post("/summarize")
+@limiter.limit("5/minute")
+async def summarize(request:Request):
+    data= await request.json()
+    session_id=data.get("session_id")
+    user_id=data.get("user_id")
+    if not session_id or not user_id:
+        raise HTTPException(status_code=400, detail="Session ID and User ID are required")
+
+    result = await summarize_method(db, user_id, session_id)
+    if not result["success"]:
+        raise HTTPException(status_code=500, detail=result["message"])
+
+    return {
+        "success": True,
+        "summary": result["summary"]
+    }
+
+
