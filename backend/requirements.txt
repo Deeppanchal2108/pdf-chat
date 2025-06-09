@@ -45,3 +45,6 @@ pgvector
 
 pymupdf
 langchain_cohere 
+
+"python-jose[cryptography]" 
+passlib[bcrypt]

@@ -23,9 +23,7 @@ db = get_db()
 """
 Soo  im thinking of having three routes inn this /chat/summarize , /chat only for the chat normal about the pdf and /chat/compare between the current scenerio and the pdf thing (will fetch the current data from the pdf and compare it with the current data)
 the chat will be stored in the database
-
 will use some tools for agents
-
 """
 
 chat_template = ChatPromptTemplate.from_messages([
@@ -82,16 +80,11 @@ async def chat( request: Request):
         save_message(db, user_id, session_id, HumanMessage(content=query))
         save_message(db, user_id, session_id, AIMessage(content=response.content))
        
-
-
         
         return {
            "success": True,
            "message": response.content
        }
-
-
-
     except Exception as e:
         return {
             "success": False,

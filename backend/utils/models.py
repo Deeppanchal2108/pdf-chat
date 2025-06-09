@@ -1,9 +1,9 @@
 import uuid
-from db import Base
+from .db import Base
 from sqlalchemy import TIMESTAMP, Column, String, Boolean, Float, ForeignKey, Text
 from pgvector.sqlalchemy import Vector
 from sqlalchemy.dialects.postgresql import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.orm import relationship
 
 
@@ -13,8 +13,8 @@ class User(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String)
     email = Column(String, unique=True, nullable=False)
-    created_at = Column(TIMESTAMP, default=datetime.now(datetime.UTC))
-    updated_at = Column(TIMESTAMP, default=datetime.now(datetime.UTC), onupdate=datetime.now(datetime.UTC))
+    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     sessions = relationship("Session", back_populates="user", cascade="all, delete-orphan")
@@ -29,8 +29,8 @@ class Session(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     file_id = Column(UUID(as_uuid=True), ForeignKey("files.id"), nullable=True)
-    created_at = Column(TIMESTAMP, default=datetime.now(datetime.UTC))
-    updated_at = Column(TIMESTAMP, default=datetime.now(datetime.UTC), onupdate=datetime.now(datetime.UTC))
+    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     user = relationship("User", back_populates="sessions")
@@ -45,8 +45,8 @@ class Message(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     session_id = Column(UUID(as_uuid=True), ForeignKey("sessions.id"), nullable=False)
     content = Column(Text, nullable=False)
-    created_at = Column(TIMESTAMP, default=datetime.now(datetime.UTC))
-    updated_at = Column(TIMESTAMP, default=datetime.now(datetime.UTC), onupdate=datetime.now(datetime.UTC))
+    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     user = relationship("User", back_populates="messages")
@@ -61,8 +61,8 @@ class File(Base):
     file_name = Column(String, nullable=False)
     content_type = Column(String)
     file_size = Column(Float)
-    created_at = Column(TIMESTAMP, default=datetime.now(datetime.UTC))
-    updated_at = Column(TIMESTAMP, default=datetime.now(datetime.UTC), onupdate=datetime.now(datetime.UTC))
+    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     user = relationship("User", back_populates="files")
@@ -78,8 +78,8 @@ class Embedding(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     file_id = Column(UUID(as_uuid=True), ForeignKey("files.id"), nullable=False)
     embedding = Column(Vector(1536), nullable=False)
-    created_at = Column(TIMESTAMP, default=datetime.now(datetime.UTC))
-    updated_at = Column(TIMESTAMP, default=datetime.now(datetime.UTC), onupdate=datetime.now(datetime.UTC))
+    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     user = relationship("User", back_populates="embeddings")
