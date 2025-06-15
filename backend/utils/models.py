@@ -13,6 +13,7 @@ class User(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String)
     email = Column(String, unique=True, nullable=False)
+    hashed_password = Column(String, nullable=False)  # ➕ Add this line
     created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
